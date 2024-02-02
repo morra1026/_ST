@@ -1,5 +1,5 @@
 #pragma once
 
 namespace st::test{
-    bool test_DateTime();
+    bool test_String();
 }

@@ -5,6 +5,8 @@
 
 #include <windows.h>
 
+#include "String.hpp"
+
 namespace st
 {
     using namespace std::chrono_literals;
@@ -53,7 +55,7 @@ namespace st
         }
 
         static constexpr LocalTime To_local_time(const unsigned int YYYY, const unsigned int MM, const unsigned int DD,
-                                                        const unsigned int hh = 0, const unsigned int mm = 0, const unsigned int ss = 0, const unsigned int ms = 0)
+                                                 const unsigned int hh = 0, const unsigned int mm = 0, const unsigned int ss = 0, const unsigned int ms = 0)
         {
             const auto ymd = std::chrono::year_month_day{std::chrono::year(YYYY) / std::chrono::month(MM) / std::chrono::day(DD)};
             if (ymd.ok())
@@ -161,30 +163,30 @@ namespace st
         static constexpr DateTime YYYYMMDDhhmm(__int64 YYYYMMDDhhmm) { return DateTime{DateTime::To_local_time(YYYYMMDDhhmm, eFormat::YYYYMMDDhhmm)}; } // 꼭 필요한가? 정리차원에서 없애는게?
         static constexpr DateTime YYYYMMDDhhmmss(__int64 YYYYMMDDhhmmss) { return DateTime{DateTime::To_local_time(YYYYMMDDhhmmss, eFormat::YYYYMMDDhhmmss)}; }
 
-        static constexpr DateTime YYYYMMDD(const std::string &strYYYYMMDD) { return strYYYYMMDD.empty() ? DateTime{} : DateTime::YYYYMMDD(atoi(strYYYYMMDD.c_str())); }
+        static constexpr DateTime YYYYMMDD(const st::String &strYYYYMMDD) { return strYYYYMMDD.empty() ? DateTime{} : DateTime::YYYYMMDD(::_ttoi(strYYYYMMDD.c_str())); }
 
-        static DateTime String(const std::string str) //"YYYY-MM-DD hh:mm:ss"
+        static DateTime String(const st::String str) //"YYYY-MM-DD hh:mm:ss"
         {
             if (str.length() != 19)
                 return DateTime{};
 
-            const auto year = ::atoi(str.substr(0, 4).c_str());
-            const auto month = ::atoi(str.substr(5, 2).c_str());
-            const auto day = ::atoi(str.substr(8, 2).c_str());
-            const auto hour = ::atoi(str.substr(11, 2).c_str());
-            const auto min = ::atoi(str.substr(14, 2).c_str());
-            const auto sec = ::atoi(str.substr(17, 2).c_str());
+            const auto year = ::_ttoi(str.substr(0, 4).c_str());
+            const auto month = ::_ttoi(str.substr(5, 2).c_str());
+            const auto day = ::_ttoi(str.substr(8, 2).c_str());
+            const auto hour = ::_ttoi(str.substr(11, 2).c_str());
+            const auto min = ::_ttoi(str.substr(14, 2).c_str());
+            const auto sec = ::_ttoi(str.substr(17, 2).c_str());
 
             return DateTime{DateTime::To_local_time(year, month, day, hour, min, sec)};
         }
-        static DateTime String_Date(const std::string str) //"YYYY-MM-DD"
+        static DateTime String_Date(const st::String str) //"YYYY-MM-DD"
         {
             if (str.length() != 10)
                 return DateTime{};
 
-            const auto year = ::atoi(str.substr(0, 4).c_str());
-            const auto month = ::atoi(str.substr(5, 2).c_str());
-            const auto day = ::atoi(str.substr(8, 2).c_str());
+            const auto year = ::_ttoi(str.substr(0, 4).c_str());
+            const auto month = ::_ttoi(str.substr(5, 2).c_str());
+            const auto day = ::_ttoi(str.substr(8, 2).c_str());
 
             return DateTime{DateTime::To_local_time(year, month, day)};
         }
@@ -269,10 +271,10 @@ namespace st
                    static_cast<__int64>(Sec());
         }
 
-        std::string To_string() const { return std::format("{:%F %T}", std::chrono::local_time<std::chrono::seconds>(std::chrono::duration_cast<std::chrono::seconds>(this->time_since_epoch()))); }           //"YYYY-MM-DD hh:mm:ss"
-        std::string To_string_Date() const { return std::format("{:%F}", this->To_local_time()); }                                                                                                             //"YYYY-MM-DD"
-        std::string To_string_Time() const { return std::format("{:%T}", std::chrono::local_time<std::chrono::seconds>(std::chrono::duration_cast<std::chrono::seconds>(this->time_since_epoch()))); }         //"hh:mm:ss"
-        std::string ToDB() const { return std::format("{0:%F}T{0:%T}", std::chrono::local_time<std::chrono::milliseconds>(std::chrono::duration_cast<std::chrono::milliseconds>(this->time_since_epoch()))); } //"YYYY - MM - DDThh:mm:ss:mmm"
+        st::String To_string() const { return std::format(_T("{:%F %T}"), std::chrono::local_time<std::chrono::seconds>(std::chrono::duration_cast<std::chrono::seconds>(this->time_since_epoch()))); }           //"YYYY-MM-DD hh:mm:ss"
+        st::String To_string_Date() const { return std::format(_T("{:%F}"), this->To_local_time()); }                                                                                                             //"YYYY-MM-DD"
+        st::String To_string_Time() const { return std::format(_T("{:%T}"), std::chrono::local_time<std::chrono::seconds>(std::chrono::duration_cast<std::chrono::seconds>(this->time_since_epoch()))); }         //"hh:mm:ss"
+        st::String ToDB() const { return std::format(_T("{0:%F}T{0:%T}"), std::chrono::local_time<std::chrono::milliseconds>(std::chrono::duration_cast<std::chrono::milliseconds>(this->time_since_epoch()))); } //"YYYY - MM - DDThh:mm:ss:mmm"
 
         // get
         inline constexpr unsigned short Year() const { return static_cast<unsigned short>(toYMD().year().operator int()); }
@@ -285,6 +287,8 @@ namespace st
         inline constexpr unsigned short MiliSec() const { return static_cast<unsigned short>(std::chrono::duration_cast<std::chrono::milliseconds>(toHMS().subseconds()).count()); }
 
         // 연, 월은 주로 환산해서 계산하기로 한다.
+        DateTime AddYears(const int years) const  = delete;
+        DateTime AddMonths(const int months) const = delete;    
         //  // arithmetic
         //  //  연대기적 계산법 - https://stackoverflow.com/questions/43010362/c-add-months-to-chronosystem-clocktime-point/43018120#43018120
         //  //  AddYears, AddMonths의 경우 한달:30.436875일, 일년365.2425일 으로 계산하고 있는 점 참고~

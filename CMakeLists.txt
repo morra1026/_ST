@@ -1,7 +1,7 @@
 message(STATUS "Build Start CMakeLists.txt")
 
 #필요 CMake 최소 버전 명시
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.2.6)
 
 #프로젝트 설정
 project(Project_ST 
@@ -13,6 +13,7 @@ set( CMAKE_VERBOSE_MAKEFILE true )
 include(CTest)
 enable_testing()
 
+add_compile_definitions(_UNICODE)
 
 #컴파일 옵션 추가
 add_compile_options(/std:c++latest /experimental:module /W4 )
@@ -21,7 +22,8 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 set(SRC_FILES 
     main.cpp
-    st/test/datetime_test.cpp)
+    st/test/datetime_test.cpp
+    st/test/string_test.cpp)
 
 #빌드 대상 바이너리 추가
 add_executable(Project_ST 

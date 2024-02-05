@@ -74,39 +74,33 @@ namespace st
         // String Builder
     public:
         template <typename... _P>
-        static String Builder(_P &&...p)
-        {
-            return concatenate(default_delimiter_, std::forward<_P>(p)...);
-        }
+        String(_P &&...p) : _String(concatenate(default_delimiter_, std::forward<_P>(p)...)){}
 
         template <typename... _P>
-        static String Builder(const Char delimiter, _P &&...p)
-        {
-            return concatenate(delimiter, std::forward<_P>(p)...);
-        }
+        String(const Char delimiter, _P &&...p) : _String(concatenate(delimiter, std::forward<_P>(p)...)){}
 
     private:
         template <typename _T, typename... _P>
-        static String concatenate(const Char delimiter, _T &&t, _P &&...p)
+        static _String concatenate(const Char delimiter, _T &&t, _P &&...p)
         {
             return toString(t) + delimiter + concatenate(delimiter, p...);
         }
 
         template <typename _T>
-        static String concatenate(const Char, _T &&t)
+        static _String concatenate(const Char, _T &&t)
         {
             return toString(t);
         }
 
         template <typename T>
-            requires std::is_constructible_v<String, T>
-        static String toString(T &&t)
+          requires std::is_constructible_v<_String, T>
+        static _String toString(T &&t)
         {
-            return String{t};
+            return _String{t};
         }
 
         template <typename T>
-        static String toString(T &&t)
+        static _String toString(T &&t)
         {
             return std::format(default_placeholder_, t);
         }

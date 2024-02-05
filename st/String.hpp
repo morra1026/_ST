@@ -10,9 +10,9 @@
 // #include <type_traits>
 
 #ifdef _UNICODE
-#define tout std::wcout
+#define tcout std::wcout
 #else
-#define tout std::cout
+#define tcout std::cout
 #endif
 #define tendl std::endl
 
@@ -89,24 +89,24 @@ namespace st
         template <typename _T, typename... _P>
         static String concatenate(const _Char delimiter, _T &&t, _P &&...p)
         {
-            return append(t) + delimiter + concatenate(delimiter, p...);
+            return toString(t) + delimiter + concatenate(delimiter, p...);
         }
 
-        template <typename T>
-        static String concaternate(T &&t)
+        template <typename _T>
+        static String concatenate(const _Char, _T &&t)
         {
-            return append(t);
+            return toString(t);
         }
 
         template <typename T>
             requires std::is_constructible_v<String, T>
-        static String append(T &&t)
+        static String toString(T &&t)
         {
             return String{t};
         }
 
         template <typename T>
-        static String append(T &&t)
+        static String toString(T &&t)
         {
             return std::format(default_placeholder_, t);
         }

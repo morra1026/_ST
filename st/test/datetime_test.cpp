@@ -4,9 +4,11 @@
 
 namespace st::test{
     bool test_DateTime(){
+        tcout << __FUNCTIONW__ << tendl;
+
         auto str_now = DateTime::Now().To_string();
 
-        tout << str_now << tendl;
+        tcout << str_now << tendl;
 
         return false;
     }

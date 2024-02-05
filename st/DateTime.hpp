@@ -420,6 +420,6 @@ struct std::formatter<st::DateTime, st::Char> : std::formatter<st::LocalTime, st
     template <typename FormatContext>
     auto format(const st::DateTime &dt, FormatContext &ctx) -> decltype(ctx.out())
     {
-        return std::formatter<st::LocalTime, st::_Char>::format(dt.To_local_time(), ctx);
+        return std::formatter<st::LocalTime, st::Char>::format(dt.To_local_time(), ctx);
     }
 };

@@ -415,7 +415,7 @@ namespace st
 }
 
 template <>
-struct std::formatter<st::DateTime, st::_Char> : std::formatter<st::LocalTime, st::_Char>
+struct std::formatter<st::DateTime, st::Char> : std::formatter<st::LocalTime, st::Char>
 {
     template <typename FormatContext>
     auto format(const st::DateTime &dt, FormatContext &ctx) -> decltype(ctx.out())

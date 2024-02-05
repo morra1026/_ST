@@ -413,3 +413,13 @@ namespace st
 
     inline std::chrono::system_clock::duration operator-(const DateTime &lhs, const DateTime &rhs) { return lhs.To_local_time() - rhs.To_local_time(); }
 }
+
+template <>
+struct std::formatter<st::DateTime, st::_Char> : std::formatter<st::LocalTime, st::_Char>
+{
+    template <typename FormatContext>
+    auto format(const st::DateTime &dt, FormatContext &ctx) -> decltype(ctx.out())
+    {
+        return std::formatter<st::LocalTime, st::_Char>::format(dt.To_local_time(), ctx);
+    }
+};

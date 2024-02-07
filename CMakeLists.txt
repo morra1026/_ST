@@ -22,8 +22,8 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 set(SRC_FILES 
     main.cpp
-    st/test/datetime_test.cpp
-    st/test/string_test.cpp)
+    st/test/test.cpp
+    )
 
 #빌드 대상 바이너리 추가
 add_executable(Project_ST 

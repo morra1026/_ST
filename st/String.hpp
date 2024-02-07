@@ -64,6 +64,8 @@ namespace st
 
         String(const Char *pStr) : _String(pStr){};
         String(const _String &str) : _String(str){};
+        template <typename _T>
+        String(const _T& t) : _String(toString(t)){};
 
         friend _tostream &operator<<(_tostream &os, const String &s)
         {
@@ -74,10 +76,13 @@ namespace st
         // String Builder
     public:
         template <typename... _P>
-        String(_P &&...p) : _String(concatenate(default_delimiter_, std::forward<_P>(p)...)){}
-
+        static String Builder(_P &&...p) {
+            return concatenate(default_delimiter_, std::forward<_P>(p)...);
+        }
         template <typename... _P>
-        String(const Char delimiter, _P &&...p) : _String(concatenate(delimiter, std::forward<_P>(p)...)){}
+        static String Builder(const Char delimiter, _P &&...p) {
+            return concatenate(delimiter, std::forward<_P>(p)...);
+        }
 
     private:
         template <typename _T, typename... _P>

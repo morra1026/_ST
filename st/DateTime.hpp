@@ -11,6 +11,28 @@ namespace st
 {
     using namespace std::chrono_literals;
 
+    class Duration : public std::chrono::system_clock::duration
+    {
+    public:
+        Duration() = default;
+        Duration(const Duration&) = default;
+        Duration& operator=(const Duration&) = default;
+        Duration(Duration&&) = default;
+        Duration& operator=(Duration&&) = default;
+        ~Duration() = default;
+
+        template <class _Rep, class _Period>
+        Duration(const std::chrono::duration<_Rep, _Period>& d) : 
+            std::chrono::system_clock::duration(std::chrono::duration_cast<std::chrono::system_clock::duration>(d)) {}
+
+        std::chrono::milliseconds ToMilliseconds() const { return std::chrono::duration_cast<std::chrono::milliseconds>(*this); }
+        std::chrono::seconds ToSeconds() const { return std::chrono::duration_cast<std::chrono::seconds>(*this); }
+        std::chrono::minutes ToMinutes() const { return std::chrono::duration_cast<std::chrono::minutes>(*this); }
+        std::chrono::hours ToHours() const { return std::chrono::duration_cast<std::chrono::hours>(*this); }
+        std::chrono::days ToDays() const { return std::chrono::duration_cast<std::chrono::days>(*this); }
+        std::chrono::weeks ToWeeks() const { return std::chrono::duration_cast<std::chrono::weeks>(*this); }
+    };
+
     using LocalTime = std::chrono::local_time<std::chrono::system_clock::duration>;
     using SysTime = std::chrono::sys_time<std::chrono::system_clock::duration>;
 
@@ -271,10 +293,11 @@ namespace st
                    static_cast<__int64>(Sec());
         }
 
-        st::String To_string() const { return std::format(_T("{:%F %T}"), std::chrono::local_time<std::chrono::seconds>(std::chrono::duration_cast<std::chrono::seconds>(this->time_since_epoch()))); }           //"YYYY-MM-DD hh:mm:ss"
-        st::String To_string_Date() const { return std::format(_T("{:%F}"), this->To_local_time()); }                                                                                                             //"YYYY-MM-DD"
-        st::String To_string_Time() const { return std::format(_T("{:%T}"), std::chrono::local_time<std::chrono::seconds>(std::chrono::duration_cast<std::chrono::seconds>(this->time_since_epoch()))); }         //"hh:mm:ss"
-        st::String ToDB() const { return std::format(_T("{0:%F}T{0:%T}"), std::chrono::local_time<std::chrono::milliseconds>(std::chrono::duration_cast<std::chrono::milliseconds>(this->time_since_epoch()))); } //"YYYY - MM - DDThh:mm:ss:mmm"
+        st::String ToString() const { return std::format(_T("{:%F %T}"), this->To_local_time()); } //"YYYY-MM-DD hh:mm:ss"
+        st::String ToString(const st::StringView format) const { return std::vformat(format, std::make_wformat_args(this->To_local_time())); }
+        st::String ToString_Date() const { return std::format(_T("{:%F}"), this->To_local_time()); } //"YYYY-MM-DD"
+        st::String ToString_Time() const { return std::format(_T("{:%T}"), this->To_local_time()); } //"hh:mm:ss"
+        st::String ToDB() const { return std::format(_T("{0:%F}T{0:%T}"), this->To_local_time()); } //"YYYY - MM - DDThh:mm:ss:mmm"
 
         // get
         inline constexpr unsigned short Year() const { return static_cast<unsigned short>(toYMD().year().operator int()); }
@@ -362,7 +385,7 @@ namespace st
         {
             if (*this < after)
             {
-                auto diff = std::chrono::abs(std::chrono::duration_cast<std::chrono::days>(after - *this));
+                auto diff = std::chrono::abs(Duration(after - *this).ToDays());
                 if (0 < diff.count())
                 {
                     if (7 <= diff.count())
@@ -411,7 +434,7 @@ namespace st
     template <class _Rep, class _Period>
     inline constexpr DateTime operator-(DateTime lhs, const std::chrono::duration<_Rep, _Period> &rhs) { return lhs -= rhs; }
 
-    inline std::chrono::system_clock::duration operator-(const DateTime &lhs, const DateTime &rhs) { return lhs.To_local_time() - rhs.To_local_time(); }
+    inline Duration operator-(const DateTime &lhs, const DateTime &rhs) { return lhs.To_local_time() - rhs.To_local_time(); }
 }
 
 template <>

@@ -50,9 +50,13 @@ namespace st::test
     {
         tcout << __FUNCTIONW__ << tendl;
 
-        auto str_now = DateTime::Now().To_string();
-
-        tcout << str_now << tendl;
+        tcout << DateTime::Now().ToString() << tendl;
+        tcout << DateTime::Now().ToString_Date() << tendl;
+        tcout << DateTime::Now().ToString_Time() << tendl;
+        tcout << DateTime::Now().ToDB() << tendl;
+        tcout << DateTime::Now().ToString(_T("{}")) << tendl;
+        tcout << DateTime::Now().ToString(_T("{0:%F}T{0:%T}")) << tendl;
+        tcout << DateTime::Now().ToString(_T("")) << tendl;
 
         return false;
     }
@@ -78,11 +82,9 @@ namespace st::test
     {
         st::PerformanceCounter pfc{};
 
-        constexpr st::StringView divider{_T("=================================================\n")};
-
-        tcout << divider << _T("PerformanceCheck Start : ") << st::test::test_String()             << _T(", ") << pfc.Check() << tendl << divider << tendl;
-        tcout << divider << _T("PerformanceCheck Start : ") << st::test::test_DateTime()           << _T(", ") << pfc.Check() << tendl << divider << tendl;
-        tcout << divider << _T("PerformanceCheck Start : ") << st::test::test_StringBuilder()      << _T(", ") << pfc.Check() << tendl << divider << tendl;
-        tcout << divider << _T("PerformanceCheck Start : ") << st::test::test_MemoryAllocator()    << _T(", ") << pfc.Check() << tendl << divider << tendl;
+        pfc.Measure(st::test::test_String);
+        pfc.Measure(st::test::test_DateTime);
+        pfc.Measure(st::test::test_StringBuilder);
+        pfc.Measure(st::test::test_MemoryAllocator);;
     }
 }

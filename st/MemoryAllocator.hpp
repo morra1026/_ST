@@ -21,6 +21,7 @@ namespace st
             free(p);
         };
 
+        //이거는 메모리 할당만 초기화는 하지 않는다?
         value_type *allocate(size_t n)
         {
             auto p = (value_type *)malloc(sizeof(value_type) * n);

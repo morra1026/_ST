@@ -24,6 +24,8 @@ namespace st
     using Char = _TCHAR;
     using _String = std::basic_string<Char>;
     using StringView = std::basic_string_view<Char>;
+    template<class ...Args>
+    using FormatString = std::basic_format_string<Char, Args...>;
 
     using _tios = std::basic_ios<Char, std::char_traits<Char>>;
     using _tstreambuf = std::basic_streambuf<Char, std::char_traits<Char>>;
@@ -51,8 +53,8 @@ namespace st
 
     class String : public _String
     {
-        static constexpr Char default_delimiter_ = _T('\t');
-        static constexpr StringView default_placeholder_ = _T("{}");
+        static constexpr Char _default_delimiter = _T('\t');
+        static constexpr StringView _default_placeholder = _T("{}");
 
     public:
         String() = default;
@@ -77,7 +79,7 @@ namespace st
     public:
         template <typename... _P>
         static String Builder(_P &&...p) {
-            return concatenate(default_delimiter_, std::forward<_P>(p)...);
+            return concatenate(_default_delimiter, std::forward<_P>(p)...);
         }
         template <typename... _P>
         static String Builder(const Char delimiter, _P &&...p) {
@@ -107,7 +109,7 @@ namespace st
         template <typename T>
         static _String toString(T &&t)
         {
-            return std::format(default_placeholder_, t);
+            return std::format(st::FormatString<T>{_default_placeholder}, t);
         }
         ///////////////////////////////////////////////////////////////////////
     };

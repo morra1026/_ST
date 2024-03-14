@@ -293,11 +293,11 @@ namespace st
                    static_cast<__int64>(Sec());
         }
 
-        st::String ToString() const { return std::format(_T("{:%F %T}"), this->To_local_time()); } //"YYYY-MM-DD hh:mm:ss"
-        st::String ToString(const st::StringView format) const { return std::vformat(format, std::make_wformat_args(this->To_local_time())); }
-        st::String ToString_Date() const { return std::format(_T("{:%F}"), this->To_local_time()); } //"YYYY-MM-DD"
-        st::String ToString_Time() const { return std::format(_T("{:%T}"), this->To_local_time()); } //"hh:mm:ss"
-        st::String ToDB() const { return std::format(_T("{0:%F}T{0:%T}"), this->To_local_time()); } //"YYYY - MM - DDThh:mm:ss:mmm"
+        st::String ToString() const { return std::format(_T("{:%F %T}"), *this); } //"YYYY-MM-DD hh:mm:ss"
+        st::String ToString(const st::FormatString<const st::DateTime&> format) const { return std::format(format, *this); }
+        st::String ToString_Date() const { return std::format(_T("{:%F}"), *this); } //"YYYY-MM-DD"
+        st::String ToString_Time() const { return std::format(_T("{:%T}"), *this); } //"hh:mm:ss"
+        st::String ToDB() const { return std::format(_T("{0:%F}T{0:%T}"), *this); } //"YYYY - MM - DDThh:mm:ss:mmm"
 
         // get
         inline constexpr unsigned short Year() const { return static_cast<unsigned short>(toYMD().year().operator int()); }
@@ -442,7 +442,7 @@ template <>
 struct std::formatter<st::DateTime, st::Char> : std::formatter<st::LocalTime, st::Char>
 {
     template <typename FormatContext>
-    auto format(const st::DateTime &dt, FormatContext &ctx) -> decltype(ctx.out())
+    auto format(const st::DateTime &dt, FormatContext &ctx) const -> decltype(ctx.out())
     {
         return std::formatter<st::LocalTime, st::Char>::format(dt.To_local_time(), ctx);
     }

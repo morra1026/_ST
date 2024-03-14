@@ -22,12 +22,12 @@ namespace st
 
             if (isTotal)
             {
-                return (now - start_).ToMilliseconds();
+                return (now - _start).ToMilliseconds();
             }
             else
             {
-                auto diff = now - prev_;
-                prev_ = now;
+                auto diff = now - _prev;
+                _prev = now;
                 return diff.ToMilliseconds();
             }
         }
@@ -60,7 +60,7 @@ namespace st
         }
 
     private:
-        const st::DateTime start_{st::DateTime::Now()};
-        st::DateTime prev_{st::DateTime::Now()};
+        const st::DateTime _start{st::DateTime::Now()};
+        st::DateTime _prev{st::DateTime::Now()};
     };
 }

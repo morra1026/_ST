@@ -310,6 +310,7 @@ namespace st
         inline constexpr unsigned short MiliSec() const { return static_cast<unsigned short>(std::chrono::duration_cast<std::chrono::milliseconds>(toHMS().subseconds()).count()); }
 
         // 연, 월은 주로 환산해서 계산하기로 한다.
+        //#todo : https://en.cppreference.com/w/cpp/chrono/year_month_day/operator_arith 참고해서 개선해보자
         DateTime AddYears(const int years) const  = delete;
         DateTime AddMonths(const int months) const = delete;    
         //  // arithmetic

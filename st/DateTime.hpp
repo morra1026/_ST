@@ -311,8 +311,8 @@ namespace st
 
         // 연, 월은 주로 환산해서 계산하기로 한다.
         //#todo : https://en.cppreference.com/w/cpp/chrono/year_month_day/operator_arith 참고해서 개선해보자
-        DateTime AddYears(const int years) const  = delete;
-        DateTime AddMonths(const int months) const = delete;    
+        DateTime& AddYears(const int years) const  = delete;
+        DateTime& AddMonths(const int months) const = delete;    
         //  // arithmetic
         //  //  연대기적 계산법 - https://stackoverflow.com/questions/43010362/c-add-months-to-chronosystem-clocktime-point/43018120#43018120
         //  //  AddYears, AddMonths의 경우 한달:30.436875일, 일년365.2425일 으로 계산하고 있는 점 참고~
@@ -357,20 +357,20 @@ namespace st
         //     return ret;
         // }
 
-        DateTime AddWeeks(const int weeks) const { return DateTime{*this + std::chrono::weeks(weeks)}; }
-        DateTime AddDay(const int day) const { return DateTime{*this + std::chrono::days(day)}; }
-        DateTime AddHour(const int hour) const { return DateTime{*this + std::chrono::hours(hour)}; }
-        DateTime AddMin(const int min) const { return DateTime{*this + std::chrono::minutes(min)}; }
-        DateTime AddSec(const int sec) const { return DateTime{*this + std::chrono::seconds(sec)}; }
+        DateTime& AddWeeks(const int weeks) { *this + std::chrono::weeks(weeks); return *this; }
+        DateTime& AddDay(const int day) { *this + std::chrono::days(day); return *this; }
+        DateTime& AddHour(const int hour) { *this + std::chrono::hours(hour); return *this; }
+        DateTime& AddMin(const int min) { *this + std::chrono::minutes(min); return *this; }
+        DateTime& AddSec(const int sec) { *this + std::chrono::seconds(sec); return *this; }
         // operator + - += -= 도 넣으면 좋을거 같은데?
         template <class _Rep, class _Period>
-        constexpr DateTime &operator+=(const std::chrono::duration<_Rep, _Period> &duration)
+        constexpr DateTime& operator+=(const std::chrono::duration<_Rep, _Period> &duration)
         {
             *this = DateTime{this->time_since_epoch() + duration};
             return *this;
         }
         template <class _Rep, class _Period>
-        constexpr DateTime &operator-=(const std::chrono::duration<_Rep, _Period> &duration)
+        constexpr DateTime& operator-=(const std::chrono::duration<_Rep, _Period> &duration)
         {
             *this = DateTime{this->time_since_epoch() - duration};
             return *this;
@@ -431,9 +431,9 @@ namespace st
 
     // DateTime arithmetic
     template <class _Rep, class _Period>
-    inline constexpr DateTime operator+(DateTime lhs, const std::chrono::duration<_Rep, _Period> &rhs) { return lhs += rhs; }
+    inline constexpr DateTime& operator+(DateTime& lhs, const std::chrono::duration<_Rep, _Period> &rhs) { return lhs += rhs; }
     template <class _Rep, class _Period>
-    inline constexpr DateTime operator-(DateTime lhs, const std::chrono::duration<_Rep, _Period> &rhs) { return lhs -= rhs; }
+    inline constexpr DateTime& operator-(DateTime& lhs, const std::chrono::duration<_Rep, _Period> &rhs) { return lhs -= rhs; }
 
     inline Duration operator-(const DateTime &lhs, const DateTime &rhs) { return lhs.To_local_time() - rhs.To_local_time(); }
 }
